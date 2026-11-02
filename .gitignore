@@ -1,0 +1,7 @@
+# Notes personnelles
+readme.html
+
+# Fichiers produits par la compilation
+dist/
+*.exe
+*.o
