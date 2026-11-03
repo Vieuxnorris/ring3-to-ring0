@@ -14,7 +14,7 @@ struct Entete {
     uint16_t Characteristics; // + 18
 };
 
-void affcher_entete(const struct Entete *e) {
+void afficher_entete(const struct Entete *e) {
     printf("Machine              : 0x%04x\n", e->Machine);
     printf("NumberOfSection      : %u\n", e->NumberOfSection);
     printf("TimeDateStamp        : %u\n", e->TimeDateStamp);
@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
             return 1;
         }
         else {
-            affcher_entete(&e);
+            afficher_entete(&e);
         }
 
         fclose(f);
