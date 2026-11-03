@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <stdint.h>
 
+#define ROUGE "\x1b[31m"
+#define VERT "\x1b[32m"
+#define RESET "\x1b[0m"
+
 #define PE 0x3c
 #define SIG 0x4550
 
@@ -41,7 +45,7 @@ int main(int argc, char* argv[]) {
         fseek(f, PE, SEEK_SET);
         size_t lus = fread(&n, sizeof(n), 1, f); // NOTEPAD ON 'PE' : f8 00 00 00
         if (lus != 1) {
-            printf("Erreur read PE\n");
+            printf(ROUGE "Erreur read PE" RESET "\n");
             fclose(f);
             return 1;
         }
@@ -49,17 +53,17 @@ int main(int argc, char* argv[]) {
         fseek(f, n, SEEK_SET);
         lus = fread(&signature, sizeof(signature), 1, f); // 0x4550
         if (lus != 1 || signature != SIG) {
-            printf("pas un fichier PE\n");
+            printf(ROUGE "pas un fichier PE" RESET "\n");
             fclose(f);
             return 1;
         }
         else {
-            printf("fichier PE valide\n");
+            printf(VERT "fichier PE valide" RESET "\n");
         }
         // Entete COFF
         lus = fread(&e, sizeof(e), 1, f); // 20 * 1 block
         if (lus != 1) {
-            printf("COFF impossible \n");
+            printf(ROUGE "COFF impossible" RESET "\n");
             fclose(f);
             return 1;
         }
