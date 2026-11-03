@@ -1,6 +1,29 @@
 #include <stdio.h>
 #include <stdint.h>
 
+#define PE 0x3c
+#define SIG 0x4550
+
+struct Entete {
+    uint16_t Machine; // + 0
+    uint16_t NumberOfSection; // + 2
+    uint32_t TimeDateStamp; // + 4
+    uint32_t PointerToSymbolTable; // + 8
+    uint32_t NumberOfSymbols; // + 12
+    uint16_t SizeOfOptionalHeader; // + 16
+    uint16_t Characteristics; // + 18
+};
+
+void affcher_entete(const struct Entete *e) {
+    printf("Machine              : 0x%04x\n", e->Machine);
+    printf("NumberOfSection      : %u\n", e->NumberOfSection);
+    printf("TimeDateStamp        : %u\n", e->TimeDateStamp);
+    printf("PointerToSymbolTable : %u\n", e->PointerToSymbolTable);
+    printf("NumberOfSymbols      : %u\n", e->NumberOfSymbols);
+    printf("SizeOfOptionalHeader : %u\n", e->SizeOfOptionalHeader);
+    printf("Characteristics      : %u\n", e->Characteristics);
+}
+
 int main(int argc, char* argv[]) {
     if (argc == 2) {
         FILE *f = fopen(argv[1], "rb");
@@ -9,14 +32,14 @@ int main(int argc, char* argv[]) {
             printf("impossible d'ouvrir le fichier\n");
             return 1;
         }
+
         uint32_t n;
         uint32_t signature;
-        uint16_t machine;
-        uint16_t NumberOfSection;
+        struct Entete e;
 
         // n
-        fseek(f, 0x3c, SEEK_SET);
-        size_t lus = fread(&n, sizeof(n), 1, f);
+        fseek(f, PE, SEEK_SET);
+        size_t lus = fread(&n, sizeof(n), 1, f); // NOTEPAD ON 'PE' : f8 00 00 00
         if (lus != 1) {
             printf("Erreur read PE\n");
             fclose(f);
@@ -24,8 +47,8 @@ int main(int argc, char* argv[]) {
         }
         // signature
         fseek(f, n, SEEK_SET);
-        lus = fread(&signature, sizeof(signature), 1, f);
-        if (lus != 1 || signature != 0x4550) {
+        lus = fread(&signature, sizeof(signature), 1, f); // 0x4550
+        if (lus != 1 || signature != SIG) {
             printf("pas un fichier PE\n");
             fclose(f);
             return 1;
@@ -33,23 +56,15 @@ int main(int argc, char* argv[]) {
         else {
             printf("fichier PE valide\n");
         }
-        // machine
-        lus = fread(&machine, sizeof(machine), 1, f);
+        // Entete COFF
+        lus = fread(&e, sizeof(e), 1, f); // 20 * 1 block
         if (lus != 1) {
-            printf("pas de code Machine\n");
+            printf("COFF impossible \n");
             fclose(f);
             return 1;
-        } else {
-            printf("Machine: 0x%04x\n", machine);
         }
-        // Number Of Section
-        lus = fread(&NumberOfSection, sizeof(NumberOfSection), 1, f);
-        if (lus != 1) {
-            printf("pas de code section\n");
-            fclose(f);
-            return 1;
-        } else {
-            printf("Section: %u\n", NumberOfSection);
+        else {
+            affcher_entete(&e);
         }
 
         fclose(f);
