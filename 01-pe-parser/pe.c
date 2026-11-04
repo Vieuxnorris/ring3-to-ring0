@@ -24,7 +24,7 @@ void afficher_entete(const struct Entete *e) {
     printf("TimeDateStamp        : %u\n", e->TimeDateStamp);
     printf("PointerToSymbolTable : %u\n", e->PointerToSymbolTable);
     printf("NumberOfSymbols      : %u\n", e->NumberOfSymbols);
-    printf("SizeOfOptionalHeader : %u\n", e->SizeOfOptionalHeader);
+    printf("SizeOfOptionalHeader : 0x%x\n", e->SizeOfOptionalHeader);
     printf("Characteristics      : %u\n", e->Characteristics);
 }
 
@@ -71,6 +71,21 @@ int main(int argc, char* argv[]) {
             afficher_entete(&e);
         }
 
+        fseek(f, e.SizeOfOptionalHeader, SEEK_CUR);
+        unsigned char nom[9]; // +1 for \0
+
+        for(size_t section=0; section < e.NumberOfSection; section++) {
+            lus = fread(nom, sizeof(nom) - 1, 1, f);
+            nom[8] = '\0';
+            if (lus != 1) {
+                printf(ROUGE "Invalid section" RESET "\n");
+                fclose(f);
+                return 1;
+            } else {
+                printf("%s\n", nom);
+                fseek(f, 32, SEEK_CUR);
+            }
+        }
         fclose(f);
         return 0;
     }
