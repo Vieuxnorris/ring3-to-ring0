@@ -8,6 +8,7 @@ jusqu'au noyau.
 | #  | Projet                                                                                 | Langage | État |
 |----|----------------------------------------------------------------------------------------|---------|------|
 | 01 | [Analyseur PE](01-pe-parser) : hexdump, en-tête COFF et noms des sections d'un `.exe` Windows | C       | fait |
+| 02 | Bibliothèque de structures : tableau dynamique, liste chaînée, table de hachage           | C       | en cours |
 
 ## Parcours
 
