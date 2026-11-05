@@ -3,6 +3,8 @@ readme.html
 
 # Fichiers produits par la compilation
 dist/
-test/
 *.exe
 *.o
+
+# Fichiers perso
+test/
