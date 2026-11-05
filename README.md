@@ -5,9 +5,9 @@ jusqu'au noyau.
 
 ## Projets
 
-| #  | Projet                                                              | Langage | État     |
-|----|---------------------------------------------------------------------|---------|----------|
-| 01 | [Analyseur PE](01-pe-parser) : hexdump, puis en-têtes d'un `.exe` Windows | C       | en cours |
+| #  | Projet                                                                                 | Langage | État |
+|----|----------------------------------------------------------------------------------------|---------|------|
+| 01 | [Analyseur PE](01-pe-parser) : hexdump, en-tête COFF et noms des sections d'un `.exe` Windows | C       | fait |
 
 ## Parcours
 
@@ -30,8 +30,17 @@ make
 
 ```
 fichier PE valide
-Machine: 0x8664
-Section: 8
+Machine              : 0x8664
+NumberOfSection      : 8
+TimeDateStamp        : 288297124
+PointerToSymbolTable : 0
+NumberOfSymbols      : 0
+SizeOfOptionalHeader : 0xf0
+Characteristics      : 34
+.text
+fothk
+.rdata
+...
 ```
 
 `make clean` supprime les fichiers compilés.
