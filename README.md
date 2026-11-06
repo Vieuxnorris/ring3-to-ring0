@@ -8,7 +8,7 @@ jusqu'au noyau.
 | #  | Projet                                                                                 | Langage | État |
 |----|----------------------------------------------------------------------------------------|---------|------|
 | 01 | [Analyseur PE](01-pe-parser) : hexdump, en-tête COFF et noms des sections d'un `.exe` Windows | C       | fait |
-| 02 | Bibliothèque de structures : tableau dynamique, liste chaînée, table de hachage           | C       | en cours |
+| 02 | [Bibliothèque de structures](02-structures) : tableau dynamique, liste chaînée, table de hachage | C       | en cours |
 
 ## Parcours
 
@@ -21,7 +21,10 @@ jusqu'au noyau.
 
 ## Compiler
 
-Prérequis : `gcc` (MinGW-w64, par exemple via MSYS2) et GNU Make.
+Prérequis : `gcc` (MinGW-w64, par exemple via MSYS2) et GNU Make. Chaque projet a son propre Makefile et compile
+dans son dossier `dist/`.
+
+### 01 : analyseur PE
 
 ```
 cd 01-pe-parser
@@ -42,6 +45,20 @@ Characteristics      : 34
 fothk
 .rdata
 ...
+```
+
+### 02 : bibliothèque de structures
+
+Pour l'instant, un tableau d'entiers dynamique : création, libération, et gestion des échecs d'allocation.
+
+```
+cd 02-structures
+make
+.\dist\tableau.exe
+```
+
+```
+taille=0 capacite=10
 ```
 
 `make clean` supprime les fichiers compilés.
