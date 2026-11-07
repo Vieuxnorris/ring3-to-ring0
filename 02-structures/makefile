@@ -1,6 +1,7 @@
 .PHONY: all clean
 CC = gcc
 CFLAGS = -Wall -Wextra -g -O2
+SRC = tableau.c main.c
 MKDIR = mkdir -p
 
 all: dist/tableau.exe
@@ -8,6 +9,6 @@ all: dist/tableau.exe
 clean: 
 	rm -f dist/tableau.exe
 
-dist/tableau.exe: tableau.c Makefile
+dist/tableau.exe: $(SRC) tableau.h Makefile
 	$(MKDIR) dist
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) $(CFLAGS) $(SRC) -o $@
