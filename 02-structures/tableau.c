@@ -14,6 +14,14 @@ void tableau_liberer(struct Tableau *t) {
     free(t);
 }
 
+int tableau_lire(struct Tableau *t, size_t indice, int *buffer) {
+    if (indice < t->taille) {
+        *buffer = t->donnees[indice];
+        return 0;
+    }
+    return 1;
+}
+
 int tableau_ajouter(struct Tableau *t, int valeur) {
     if (t->taille >= t->capacite) {
         size_t new_capacite;
@@ -38,8 +46,13 @@ int tableau_ajouter(struct Tableau *t, int valeur) {
 }
 
 void afficher_valeur(struct Tableau *t) {
+    int v;
     for(size_t i=0; i<t->taille;i++) {
-        printf("%d ", t->donnees[i]);
+        if (tableau_lire(t, i, &v) == 0) {
+            printf("%d ", v);
+        } else {
+            printf("Indice invalide\n");
+        }
     }
     printf("\n");
 }
@@ -63,33 +76,45 @@ struct Tableau *tableau_creer(size_t capacite) {
 }
 
 int main() {
-    struct Tableau *t = tableau_creer(2);
-    struct Tableau *j = tableau_creer(0);
-    if (t == NULL || j == NULL) {
+    const size_t nb_ajouts = 1000;
+    struct Tableau *t = tableau_creer(0);
+    if (t == NULL) {
         return 1;
     }
 
-    int last_result;
+    int valid;
+    for(size_t i=0; i<nb_ajouts; i++) {
+        valid = tableau_ajouter(t, (int)i-500);
+        if (valid != 0) {
+            printf("ERROR ajout sur l'indice: %zu\n", i);
+            tableau_liberer(t);
+            return 1;
+        }
+    }
 
-    // test 5 ajouts
-    tableau_ajouter(t, 10);
-    tableau_ajouter(t, 20);
-    tableau_ajouter(t, 30);
-    tableau_ajouter(t, 40);
-    last_result = tableau_ajouter(t, 50);
-    printf("taille=%zu capacite=%zu last_result=%d\n", t->taille,t->capacite, last_result);
-    afficher_valeur(t);
+    if(t->taille != nb_ajouts) {
+        printf("ERROR taille:%zu == attendu:%zu\n", t->taille, nb_ajouts);
+        tableau_liberer(t);
+        return 1;
+    }
+    printf("taille=%zu - capacite=%zu\n", t->taille, t->capacite);
+    
+    int v;
+    for(size_t i=0; i<nb_ajouts;i++) {
+        if(tableau_lire(t, i, &v) == 0) {
+            if (v != (int)i-500) {
+                printf("indice: %zu attendu: %d, lu: %d\n", i, (int)i-500, v);
+                tableau_liberer(t);
+                return 1;
+            }
+        } else {
+            printf("ERROR\n");
+            tableau_liberer(t);
+            return 1;
+        }
+    }
 
-    // test 3 ajouts
-    tableau_ajouter(j, 10);
-    tableau_ajouter(j, 20);
-    tableau_ajouter(j, 30);
-    last_result = tableau_ajouter(j, -1);
-    printf("taille=%zu capacite=%zu last_result=%d\n", j->taille,j->capacite, last_result);
-    afficher_valeur(j);
-
-    // free
+    printf("OK : 1000 valeurs verifiees.\n");
     tableau_liberer(t);
-    tableau_liberer(j);
     return 0;
 }
