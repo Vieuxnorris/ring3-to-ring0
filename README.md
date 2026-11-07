@@ -49,17 +49,28 @@ fothk
 
 ### 02 : bibliothèque de structures
 
-Pour l'instant, un tableau d'entiers dynamique : création, libération, et gestion des échecs d'allocation.
+Un tableau d'entiers dynamique, séparé en bibliothèque et programme de test :
+
+- `tableau.h` : la structure et les déclarations ;
+- `tableau.c` : création, ajout en fin (capacité doublée avec `realloc`, tableau intact si l'agrandissement
+  échoue), lecture avec vérification des bornes, libération ;
+- `main.c` : 1000 ajouts depuis une capacité de 0, puis chaque valeur relue et comparée à la valeur attendue.
 
 ```
 cd 02-structures
 make
 .\dist\tableau.exe
+echo $LASTEXITCODE
 ```
 
 ```
-taille=0 capacite=10
+taille=1000 - capacite=1024
+OK : 1000 valeurs verifiees.
+0
 ```
+
+Le test renvoie 1 et affiche la première erreur (indice, valeur attendue, valeur lue) si une valeur est fausse.
+La liste chaînée et la table de hachage suivront dans le même dossier.
 
 `make clean` supprime les fichiers compilés.
 
