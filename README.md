@@ -49,12 +49,15 @@ fothk
 
 ### 02 : bibliothèque de structures
 
-Un tableau d'entiers dynamique, séparé en bibliothèque et programme de test :
+Chaque structure est séparée en bibliothèque et programme de test. `make` construit les deux programmes.
+
+**Tableau d'entiers dynamique** (fait) :
 
 - `tableau.h` : la structure et les déclarations ;
 - `tableau.c` : création, ajout en fin (capacité doublée avec `realloc`, tableau intact si l'agrandissement
   échoue), lecture avec vérification des bornes, libération ;
-- `main.c` : 1000 ajouts depuis une capacité de 0, puis chaque valeur relue et comparée à la valeur attendue.
+- `main_tableau.c` : 1000 ajouts depuis une capacité de 0, puis chaque valeur relue et comparée à la valeur
+  attendue.
 
 ```
 cd 02-structures
@@ -70,7 +73,15 @@ OK : 1000 valeurs verifiees.
 ```
 
 Le test renvoie 1 et affiche la première erreur (indice, valeur attendue, valeur lue) si une valeur est fausse.
-La liste chaînée et la table de hachage suivront dans le même dossier.
+
+**Liste chaînée** (en cours) :
+
+- `liste.h` : un nœud (valeur et adresse du suivant) et la liste (premier nœud et taille) ;
+- `liste.c` : création d'une liste vide et libération, qui accepte `NULL` ;
+- `main_liste.c` : libération de `NULL`, puis création et libération d'une liste vide (`.\dist\liste.exe`).
+
+Viendront ensuite l'ajout en tête, le parcours, la libération de tous les nœuds, l'ajout en fin et la
+suppression. La table de hachage suivra dans le même dossier.
 
 `make clean` supprime les fichiers compilés.
 
