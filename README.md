@@ -13,11 +13,12 @@ jusqu'au noyau.
 ## Parcours
 
 1. **Bases du C** : formats binaires, structures de données, allocateur, compression, SHA-256.
-2. **La machine** : assembleur x86-64, émulateurs, désassembleur, mini-compilateur, chargeur de `.exe`.
+2. **La machine** : assembleur x86-64, émulateurs, désassembleur, mini-compilateur, chargeur de `.exe`,
+   bootloader et mini-noyau.
 3. **C++** : RAII, templates, moteur de jeu, réseau, concurrence.
 4. **Windows et reverse** : processus, mémoire, débogueur, hooks, crackmes.
 5. **Modding de jeux solo** : trainers, formats de fichiers, mods par DLL.
-6. **Noyau** : mini-noyau, pilotes Windows, hyperviseur.
+6. **Noyau Windows** : pilotes, hyperviseur.
 
 ## Compiler
 
