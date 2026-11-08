@@ -1,7 +1,7 @@
 #include "tableau.h"
 #include <stdio.h>
 
-int main() {
+int main(void) {
     const size_t nb_ajouts = 1000;
     struct Tableau *t = tableau_creer(0);
     if (t == NULL) {
