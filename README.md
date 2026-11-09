@@ -78,11 +78,38 @@ Le test renvoie 1 et affiche la première erreur (indice, valeur attendue, valeu
 **Liste chaînée** (en cours) :
 
 - `liste.h` : un nœud (valeur et adresse du suivant) et la liste (premier nœud et taille) ;
-- `liste.c` : création d'une liste vide et libération, qui accepte `NULL` ;
-- `main_liste.c` : libération de `NULL`, puis création et libération d'une liste vide (`.\dist\liste.exe`).
+- `liste.c` : création d'une liste vide, ajout en tête (renvoie `NULL` si l'allocation échoue, liste intacte),
+  affichage, lecture du n-ième élément avec vérification de l'indice (valeur rendue par pointeur, rien n'est
+  écrit en cas de refus), libération qui accepte `NULL` (pour l'instant, la structure seulement, pas les nœuds) ;
+- `main_liste.c` : ajout en tête de 30, 20 puis 10, puis vérification de la taille, de l'ordre des valeurs
+  (la liste se lit 10, 20, 30 : l'ajout en tête inverse l'ordre) et de la fin de la chaîne ; lecture des indices 0 à 2, puis refus de l'indice 3 et d'une liste vide, avec
+  la variable de sortie inchangée.
 
-Viendront ensuite l'ajout en tête, le parcours, la libération de tous les nœuds, l'ajout en fin et la
-suppression. La table de hachage suivra dans le même dossier.
+```
+cd 02-structures
+make
+.\dist\liste.exe
+echo $LASTEXITCODE
+```
+
+```
+...
+TAILLE OK!
+valeur:10 valeur:20 valeur:30
+last P value is NULL
+VALEUR OK!
+test 1 -- buffer:10 - valeur_ajouts:10
+test 1 -- buffer:20 - valeur_ajouts:20
+test 1 -- buffer:30 - valeur_ajouts:30
+test 2 -- buffer:777
+test 3 -- buffer:777
+0
+```
+
+Chaque vérification ratée affiche une ligne `ERROR` et le test renvoie 1.
+
+Viendront ensuite la libération de tous les nœuds, l'ajout en fin et la suppression. La table de hachage suivra
+dans le même dossier.
 
 `make clean` supprime les fichiers compilés.
 
