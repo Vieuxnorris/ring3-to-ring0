@@ -15,5 +15,8 @@ struct Liste {
 
 void liste_liberer(struct Liste *l);
 struct Liste *liste_creer(void);
+int liste_lire(struct Liste *l, size_t indice, int *buffer);
+struct Noeud *liste_ajouter_tete(struct Liste *l, int valeur);
+void afficher_valeur(struct Liste *l);
 
 #endif
