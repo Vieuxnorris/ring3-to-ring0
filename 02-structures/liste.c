@@ -4,9 +4,13 @@
 
 void liste_liberer(struct Liste *l) {
     if (l != NULL) {
+        struct Noeud *p = l->premier;
+        while(p != NULL) {
+            struct Noeud *tmp = p;
+            p = p->suivant;
+            free(tmp);
+        }
         free(l);
-    } else {
-        printf("Liste NULL no free memory needed\n");
     }
 }
 
