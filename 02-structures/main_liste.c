@@ -55,10 +55,10 @@ int main(void) {
 
     // Test last P
     if (p != NULL) {
+        printf("ERREUR noeud de trop apres index %zu\n", index);
         liste_liberer(l, &nb_free);
         return 1;
     }
-    printf("last P value is NULL\n");
 
     // test index test
     if (index != MAX_INDEX) {
@@ -122,6 +122,69 @@ int main(void) {
         printf("test 3 -- buffer:%d\n", buffer);
     }
 
+    for(size_t i=0; i<MAX_INDEX;i++) {
+        n = liste_ajouter_fin(m, ajouts[i]);
+        if (n == NULL) {
+            printf("ERREUR malloc\n");
+            liste_liberer(l, &nb_free);
+            liste_liberer(m, &nb_free);
+            return 1;
+        }
+        printf("valeur n:%d ", n->valeur);
+        nb_free_compare++;
+    }
+    printf("\n");
+
+    struct Noeud *tmp = m->premier;
+    liste_echec_malloc = 1;
+    n = liste_ajouter_fin(m, 50);
+    liste_echec_malloc = 0;
+    if (n != NULL) {
+        printf("n n'est pas NULL\n");
+        liste_liberer(l, &nb_free);
+        liste_liberer(m, &nb_free);
+        return 1;
+    }
+    if (m->premier != tmp) {
+        printf("m différent de la save temporaire (address)\n");
+        liste_liberer(l, &nb_free);
+        liste_liberer(m, &nb_free);
+        return 1;
+    }
+
+    p = m->premier;
+    index = 0;
+    while (p != NULL && index != MAX_INDEX) {
+        if (ajouts[index] != p->valeur) {
+            printf("ERREUR valeur: %d attendu %d\n", p->valeur, ajouts[index]);
+            liste_liberer(l, &nb_free);
+            liste_liberer(m, &nb_free);
+            return 1;
+        }
+        p = p->suivant;
+        index++;
+    }
+
+    if (p != NULL) {
+        printf("ERREUR noeud de trop apres index %zu\n", index);
+        liste_liberer(l, &nb_free);
+        liste_liberer(m, &nb_free);
+        return 1;
+    }
+
+    if (index != MAX_INDEX) {
+        printf("ERREUR index:%zu attendu: %d\n", index, MAX_INDEX);
+        liste_liberer(l, &nb_free);
+        liste_liberer(m, &nb_free);
+        return 1;
+    }
+
+    if (m->taille != MAX_INDEX) {
+        printf("ERREUR taille: %zu attendu 3\n", m->taille);
+        liste_liberer(l, &nb_free);
+        liste_liberer(m, &nb_free);
+        return 1;
+    }
 
     liste_liberer(l, &nb_free);
     liste_liberer(m, &nb_free);
