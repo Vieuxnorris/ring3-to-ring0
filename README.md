@@ -80,10 +80,13 @@ Le test renvoie 1 et affiche la première erreur (indice, valeur attendue, valeu
 - `liste.h` : un nœud (valeur et adresse du suivant) et la liste (premier nœud et taille) ;
 - `liste.c` : création d'une liste vide, ajout en tête (renvoie `NULL` si l'allocation échoue, liste intacte),
   affichage, lecture du n-ième élément avec vérification de l'indice (valeur rendue par pointeur, rien n'est
-  écrit en cas de refus), libération qui accepte `NULL` (pour l'instant, la structure seulement, pas les nœuds) ;
+  écrit en cas de refus), libération de tous les nœuds puis de la liste, qui accepte `NULL` et peut compter
+  ses `free` dans un compteur passé par adresse (`NULL` si l'appelant ne compte pas) ;
 - `main_liste.c` : ajout en tête de 30, 20 puis 10, puis vérification de la taille, de l'ordre des valeurs
-  (la liste se lit 10, 20, 30 : l'ajout en tête inverse l'ordre) et de la fin de la chaîne ; lecture des indices 0 à 2, puis refus de l'indice 3 et d'une liste vide, avec
-  la variable de sortie inchangée.
+  (la liste se lit 10, 20, 30 : l'ajout en tête inverse l'ordre) et de la fin de la chaîne ; lecture des
+  indices 0 à 2, puis refus de l'indice 3 et d'une liste vide, avec la variable de sortie inchangée ; enfin,
+  le nombre de `free` faits à la libération est comparé au nombre d'allocations comptées par le test
+  (1 par liste créée, 1 par nœud ajouté).
 
 ```
 cd 02-structures
@@ -103,12 +106,16 @@ test 1 -- buffer:20 - valeur_ajouts:20
 test 1 -- buffer:30 - valeur_ajouts:30
 test 2 -- buffer:777
 test 3 -- buffer:777
+Nombre de free nb_free: 5 nb_free_compare:5
+free compare it's OK!
 0
 ```
 
-Chaque vérification ratée affiche une ligne `ERROR` et le test renvoie 1.
+Chaque vérification ratée affiche une ligne `ERROR` (ou `WRONG` pour le compte des `free`) et le test
+renvoie 1. Par exemple, si `liste_liberer` oublie de libérer la structure de la liste, le test affiche
+`nb_free: 3 nb_free_compare:5` et renvoie 1.
 
-Viendront ensuite la libération de tous les nœuds, l'ajout en fin et la suppression. La table de hachage suivra
+Viendront ensuite l'ajout en fin et la suppression d'une valeur. La table de hachage suivra
 dans le même dossier.
 
 `make clean` supprime les fichiers compilés.

@@ -13,7 +13,7 @@ struct Liste {
     struct Noeud *premier;
 };
 
-void liste_liberer(struct Liste *l);
+void liste_liberer(struct Liste *l, size_t *nb_free);
 struct Liste *liste_creer(void);
 int liste_lire(struct Liste *l, size_t indice, int *buffer);
 struct Noeud *liste_ajouter_tete(struct Liste *l, int valeur);

@@ -2,15 +2,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void liste_liberer(struct Liste *l) {
+void liste_liberer(struct Liste *l, size_t *nb_free) {
     if (l != NULL) {
         struct Noeud *p = l->premier;
         while(p != NULL) {
             struct Noeud *tmp = p;
             p = p->suivant;
             free(tmp);
+            if (nb_free != NULL) {
+                *nb_free += 1;
+            }
         }
         free(l);
+        if (nb_free != NULL) {
+            *nb_free += 1;
+        }
     }
 }
 
