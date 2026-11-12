@@ -1,11 +1,48 @@
 #include "liste.h"
 #include <stdio.h>
 
-enum {MAX_INDEX=3};
+enum {
+    MAX_INDEX=3
+};
+
+const int ajouts_invers[] = {30,20,10};
+const int ajouts_order[] = {10,20,30};
+
+// return 1 : si la valeur de p n'est pas conforme a attendu[index]
+// return 1 : si P a un index en trop
+// return 1 : index n'est pas égal a nb_attendu
+// retunr 1 : si la taille de la liste n'est pas conforme
+// return 0 : if tout les test sont bon
+int verifier_liste(struct Liste *l, const int *attendu, size_t nb_attendu) {
+    struct Noeud *p = l->premier;
+    size_t index = 0;
+    while (p != NULL && index != nb_attendu) {
+        if (attendu[index] != p->valeur) { 
+            printf("ERROR p->valeur non conforme index:%zu index_value:%d valeur_p:%d\n", index, attendu[index],p->valeur);
+            return 1;
+        }
+        index++;
+        p = p->suivant;
+    }
+
+    if (p != NULL) {
+        printf("ERREUR noeud de trop apres index %zu\n", index);
+        return 1;
+    }
+    if (index != nb_attendu) {
+        printf("ERROR INDEX MAX - index_valeur:%zu max_index:%zu\n", index, nb_attendu);
+        return 1;
+    }
+    if (l->taille != nb_attendu) {
+        printf("ERREUR taille: %zu attendu %zu\n", l->taille, nb_attendu);
+        return 1;
+    }
+
+    return 0;
+}
 
 int main(void) {
 
-    int ajouts[] = {30,20,10};
     size_t nb_free = 0;
     size_t nb_free_compare = 0;
 
@@ -22,7 +59,7 @@ int main(void) {
 
     // Check ajout + taille
     for (size_t i=0; i<MAX_INDEX;i++) {
-        n = liste_ajouter_tete(l,ajouts[i]);
+        n = liste_ajouter_tete(l,ajouts_invers[i]);
         if (n == NULL) {
             printf("ERROR ALLOC Noeud 1\n");
             liste_liberer(l, &nb_free);
@@ -31,50 +68,20 @@ int main(void) {
         printf("taille:%zu - adresse:0x%p\n", l->taille, l->premier);
         nb_free_compare++;
     }
-    if (l->taille != 3) {
-        printf("ERROR TAILLE Liste l->taille:%zu attendu:%d\n", l->taille, MAX_INDEX);
+    if (verifier_liste(l, ajouts_order, MAX_INDEX) != 0) {
         liste_liberer(l, &nb_free);
         return 1;
     }
-    printf("TAILLE OK!\n");
 
     afficher_valeur(l);
-
-    // test Valeurs
-    struct Noeud *p = l->premier;
-    size_t index = 0;
-    while (p != NULL && index != MAX_INDEX) {
-        if (ajouts[(MAX_INDEX-1) - index] != p->valeur) {
-            printf("ERROR p->valeur non conforme index:%zu index_value:%d valeur_p:%d\n", index, ajouts[(MAX_INDEX-1) - index],p->valeur);
-            liste_liberer(l, &nb_free);
-            return 1;
-        }
-        index++;
-        p = p->suivant;
-    }
-
-    // Test last P
-    if (p != NULL) {
-        printf("ERREUR noeud de trop apres index %zu\n", index);
-        liste_liberer(l, &nb_free);
-        return 1;
-    }
-
-    // test index test
-    if (index != MAX_INDEX) {
-        printf("ERROR INDEX MAX - index_valeur:%zu max_index:%d\n", index, MAX_INDEX);
-        liste_liberer(l, &nb_free);
-        return 1;
-    }
-    printf("VALEUR OK!\n");
 
     for (size_t i=0; i<3;i++) {
         int buffer = 777;
         if(liste_lire(l, i, &buffer) == 0) {
-            if(buffer == ajouts[(MAX_INDEX-1) - i]) {
-                printf("test 1 -- buffer:%d - valeur_ajouts:%d\n", buffer, ajouts[(MAX_INDEX - 1) - i]);
+            if(buffer == ajouts_order[i]) {
+                printf("test 1 -- buffer:%d - valeur_ajouts:%d\n", buffer, ajouts_order[i]);
             } else {
-                printf("ERROR test 1 -- buffer:%d - valeur_ajouts:%d\n", buffer, ajouts[(MAX_INDEX - 1) - i]);
+                printf("ERROR test 1 -- buffer:%d - valeur_ajouts:%d\n", buffer, ajouts_order[i]);
                 liste_liberer(l, &nb_free);
                 return 1;
             }
@@ -123,7 +130,7 @@ int main(void) {
     }
 
     for(size_t i=0; i<MAX_INDEX;i++) {
-        n = liste_ajouter_fin(m, ajouts[i]);
+        n = liste_ajouter_fin(m, ajouts_invers[i]);
         if (n == NULL) {
             printf("ERREUR malloc\n");
             liste_liberer(l, &nb_free);
@@ -146,45 +153,17 @@ int main(void) {
         return 1;
     }
     if (m->premier != tmp) {
-        printf("m différent de la save temporaire (address)\n");
+        printf("ERROR liste différent de la save temporaire (address)\n");
+        liste_liberer(l, &nb_free);
+        liste_liberer(m, &nb_free);
+        return 1;
+    }
+    if (verifier_liste(m, ajouts_invers, MAX_INDEX) != 0) {
         liste_liberer(l, &nb_free);
         liste_liberer(m, &nb_free);
         return 1;
     }
 
-    p = m->premier;
-    index = 0;
-    while (p != NULL && index != MAX_INDEX) {
-        if (ajouts[index] != p->valeur) {
-            printf("ERREUR valeur: %d attendu %d\n", p->valeur, ajouts[index]);
-            liste_liberer(l, &nb_free);
-            liste_liberer(m, &nb_free);
-            return 1;
-        }
-        p = p->suivant;
-        index++;
-    }
-
-    if (p != NULL) {
-        printf("ERREUR noeud de trop apres index %zu\n", index);
-        liste_liberer(l, &nb_free);
-        liste_liberer(m, &nb_free);
-        return 1;
-    }
-
-    if (index != MAX_INDEX) {
-        printf("ERREUR index:%zu attendu: %d\n", index, MAX_INDEX);
-        liste_liberer(l, &nb_free);
-        liste_liberer(m, &nb_free);
-        return 1;
-    }
-
-    if (m->taille != MAX_INDEX) {
-        printf("ERREUR taille: %zu attendu 3\n", m->taille);
-        liste_liberer(l, &nb_free);
-        liste_liberer(m, &nb_free);
-        return 1;
-    }
 
     liste_liberer(l, &nb_free);
     liste_liberer(m, &nb_free);
