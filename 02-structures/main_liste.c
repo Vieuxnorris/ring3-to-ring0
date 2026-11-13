@@ -7,7 +7,9 @@ enum {
 
 const int ajouts_invers[] = {30,20,10};
 const int ajouts_order[] = {10,20,30};
-const int ajouts_delete[] = {10,30};
+const int test_delete[] = {10,30};
+const int test_delete_m[] = {20,30};
+const int test_delete_l[] = {20};
 
 // return 1 : si la valeur de p n'est pas conforme a attendu[index]
 // return 1 : si P a un index en trop
@@ -105,13 +107,12 @@ int main(void) {
         }
         printf("test 2 -- buffer:%d\n", buffer);
     }
-
     if (liste_delete(l, 20, &nb_free) != 0) {
         printf("ERROR - FAIL DELETE RECORD\n");   
         liste_liberer(l, &nb_free);
         return 1;
     }
-    if (verifier_liste(l, ajouts_delete, 2) != 0) {
+    if (verifier_liste(l, test_delete, 2) != 0) {
         liste_liberer(l, &nb_free);
         return 1;
     }
@@ -175,6 +176,90 @@ int main(void) {
         return 1;
     }
 
+    printf("INIT TEST\n");
+    afficher_valeur(l);
+    afficher_valeur(m);
+    if (liste_delete(l, 10, &nb_free) != 0) {
+        printf("ERROR - CAS B tête\n");
+        liste_liberer(l, &nb_free);
+        liste_liberer(m, &nb_free);
+        return 1;
+    }
+    printf("OK CAS B\n");
+    afficher_valeur(l);
+    afficher_valeur(m);
+    if (liste_delete(m, 10, &nb_free) != 0) {
+        printf("ERROR - CAS C dernier\n");
+        liste_liberer(l, &nb_free);
+        liste_liberer(m, &nb_free);
+        return 1;
+    }
+    printf("OK CAS C\n");
+    afficher_valeur(l);
+    afficher_valeur(m);
+    if (liste_delete(l, 10, &nb_free) != 1) {
+        printf("ERROR - CAS D absente\n");
+        liste_liberer(l, &nb_free);
+        liste_liberer(m, &nb_free);
+        return 1;
+    }
+    printf("OK CAS D\n");
+    afficher_valeur(l);
+    afficher_valeur(m);
+    if (liste_delete(l, 30, &nb_free) != 0) {
+        printf("ERROR - CAS E1 vider\n");
+        liste_liberer(l, &nb_free);
+        liste_liberer(m, &nb_free);
+        return 1;
+    }
+    printf("OK CAS E1\n");
+    afficher_valeur(l);
+    afficher_valeur(m);
+    if (liste_delete(l, 10, &nb_free) != 1) {
+        printf("ERROR - CAS E2 vide\n");
+        liste_liberer(l, &nb_free);
+        liste_liberer(m, &nb_free);
+        return 1;
+    }
+    printf("OK CAS E2\n");
+    afficher_valeur(l);
+    afficher_valeur(m);
+    if (liste_delete(NULL, 10, &nb_free) != 1) {
+        printf("ERROR - CAS F NULL\n");
+        liste_liberer(l, &nb_free);
+        liste_liberer(m, &nb_free);
+        return 1;
+    }
+    printf("OK CAS F\n");
+    afficher_valeur(l);
+    afficher_valeur(m);
+    struct Noeud *test = liste_ajouter_fin(m, 30);
+    if (test != NULL) {
+        nb_free_compare++;
+        if (liste_delete(m, 30, &nb_free) != 0) {
+            printf("ERROR - CAS G doublon\n");
+            liste_liberer(l, &nb_free);
+            liste_liberer(m, &nb_free);
+            return 1;
+        }
+    }
+    printf("OK CAS G\n");
+    afficher_valeur(l);
+    afficher_valeur(m);
+
+    
+    if (verifier_liste(m, test_delete_m, 2) != 0) {
+        liste_liberer(l, &nb_free);
+        liste_liberer(m, &nb_free);
+        return 1;
+    }
+    afficher_valeur(m);
+    if (verifier_liste(l, test_delete_l, 0) != 0) {
+        liste_liberer(l, &nb_free);
+        liste_liberer(m, &nb_free);
+        return 1;
+    }
+    afficher_valeur(l);
 
     liste_liberer(l, &nb_free);
     liste_liberer(m, &nb_free);
