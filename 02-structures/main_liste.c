@@ -7,6 +7,7 @@ enum {
 
 const int ajouts_invers[] = {30,20,10};
 const int ajouts_order[] = {10,20,30};
+const int ajouts_delete[] = {10,30};
 
 // return 1 : si la valeur de p n'est pas conforme a attendu[index]
 // return 1 : si P a un index en trop
@@ -42,7 +43,6 @@ int verifier_liste(struct Liste *l, const int *attendu, size_t nb_attendu) {
 }
 
 int main(void) {
-
     size_t nb_free = 0;
     size_t nb_free_compare = 0;
 
@@ -105,6 +105,17 @@ int main(void) {
         }
         printf("test 2 -- buffer:%d\n", buffer);
     }
+
+    if (liste_delete(l, 20, &nb_free) != 0) {
+        printf("ERROR - FAIL DELETE RECORD\n");   
+        liste_liberer(l, &nb_free);
+        return 1;
+    }
+    if (verifier_liste(l, ajouts_delete, 2) != 0) {
+        liste_liberer(l, &nb_free);
+        return 1;
+    }
+    afficher_valeur(l);
 
     struct Liste *m = liste_creer();
     nb_free_compare++;

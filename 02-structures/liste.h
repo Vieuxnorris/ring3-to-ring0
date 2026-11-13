@@ -20,6 +20,7 @@ struct Liste *liste_creer(void);
 int liste_lire(struct Liste *l, size_t indice, int *buffer);
 struct Noeud *liste_ajouter_tete(struct Liste *l, int valeur);
 struct Noeud *liste_ajouter_fin(struct Liste *l, int valeur);
+int liste_delete(struct Liste *l, int valeur, size_t *nb_free);
 void afficher_valeur(struct Liste *l);
 
 #endif

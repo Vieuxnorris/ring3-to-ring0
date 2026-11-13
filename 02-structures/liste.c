@@ -63,6 +63,55 @@ struct Noeud *liste_ajouter_fin(struct Liste *l, int valeur) {
     return n;
 }
 
+
+// ┌───────────────┬────────┬──────┬──────────────┬───────────────┐
+// │      Cas      │ retour │ free │ taille après │ premier après │
+// ├───────────────┼────────┼──────┼──────────────┼───────────────┤
+// │ a) 20 milieu  │ 0      │ 1    │ 2            │ 10            │
+// ├───────────────┼────────┼──────┼──────────────┼───────────────┤
+// │ b) 10 tête    │ 0      │ 1    │ 2            │ 20            │
+// ├───────────────┼────────┼──────┼──────────────┼───────────────┤
+// │ c) 30 dernier │ 0      │ 1    │ 2            │ 10            │
+// ├───────────────┼────────┼──────┼──────────────┼───────────────┤
+// │ d) 99 absente │ 1      │ 0    │ 3            │ 10            │
+// ├───────────────┼────────┼──────┼──────────────┼───────────────┤
+// │ e) liste vide │ 1      │ 0    │ 0            │ NULL          │
+// ├───────────────┼────────┼──────┼──────────────┼───────────────┤
+// │ f) l == NULL  │ 1      │ 0    │ —            │ —             │
+// ├───────────────┼────────┼──────┼──────────────┼───────────────┤
+// │ g) double cas │ 0      │ 1    │ 2            │ 10            │
+// └───────────────┴────────┴──────┴──────────────┴───────────────┘
+int liste_delete(struct Liste *l, int valeur, size_t *nb_free) {
+    if (l != NULL) {
+        struct Noeud *target = l->premier;
+        struct Noeud *previous = NULL;
+        while (target != NULL) {
+            if(target->valeur == valeur) {
+                if (previous == NULL) {
+                    l->premier = target->suivant;
+                    free(target);
+                    if (nb_free != NULL) {
+                        *nb_free += 1;
+                    }
+                    l->taille--;
+                    return 0;
+                } else {
+                    previous->suivant = target->suivant;
+                    free(target);
+                    if (nb_free != NULL) {
+                        *nb_free += 1;
+                    }
+                    l->taille--;
+                    return 0;
+                }
+            }
+            previous = target;
+            target = target->suivant;
+        }
+    }
+    return 1;
+}
+
 struct Noeud *liste_ajouter_tete(struct Liste *l, int valeur) {
     struct Noeud *n = NULL;
     if (liste_echec_malloc == 0) {
