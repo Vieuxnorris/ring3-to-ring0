@@ -8,8 +8,9 @@ enum {
 const int ajouts_invers[] = {30,20,10};
 const int ajouts_order[] = {10,20,30};
 const int test_delete[] = {10,30};
-const int test_delete_m[] = {20,30};
-const int test_delete_l[] = {20};
+const int test_delete_m[] = {30,20};
+const int test_delete_m_bis[] = {20,30};
+const int test_delete_l[] = {30};
 
 // return 1 : si la valeur de p n'est pas conforme a attendu[index]
 // return 1 : si P a un index en trop
@@ -41,6 +42,24 @@ int verifier_liste(struct Liste *l, const int *attendu, size_t nb_attendu) {
         return 1;
     }
 
+    return 0;
+}
+
+// return 1 : si liste_delete renvoie le contraire du retour_attendu
+// return 1 : si verifier_liste est un echec
+// return 0: si l == NULL ou que les test sont OK
+int tester_suppression(struct Liste *l, int valeur_test, int retour_attendu, const int *attendu, size_t nb_attendu, size_t *nb_free) {
+    int result_test = liste_delete(l, valeur_test, nb_free);
+    if (result_test != retour_attendu) {
+        printf("retour_attendu:%d - valeur_test:%d - result_test:%d\n", retour_attendu, valeur_test, result_test);
+        return 1;
+    }
+    if (l == NULL) {
+        return 0;
+    }
+    if (verifier_liste(l, attendu, nb_attendu) != 0) {
+        return 1;
+    }
     return 0;
 }
 
@@ -179,8 +198,8 @@ int main(void) {
     printf("INIT TEST\n");
     afficher_valeur(l);
     afficher_valeur(m);
-    if (liste_delete(l, 10, &nb_free) != 0) {
-        printf("ERROR - CAS B tête\n");
+    if (tester_suppression(l, 10, 0, test_delete_l, 1, &nb_free) != 0) {
+        printf("ERROR - CAS B tete\n");
         liste_liberer(l, &nb_free);
         liste_liberer(m, &nb_free);
         return 1;
@@ -188,7 +207,7 @@ int main(void) {
     printf("OK CAS B\n");
     afficher_valeur(l);
     afficher_valeur(m);
-    if (liste_delete(m, 10, &nb_free) != 0) {
+    if (tester_suppression(m, 10, 0, test_delete_m, 2, &nb_free) != 0) {
         printf("ERROR - CAS C dernier\n");
         liste_liberer(l, &nb_free);
         liste_liberer(m, &nb_free);
@@ -197,7 +216,7 @@ int main(void) {
     printf("OK CAS C\n");
     afficher_valeur(l);
     afficher_valeur(m);
-    if (liste_delete(l, 10, &nb_free) != 1) {
+    if (tester_suppression(l, 10, 1, test_delete_l, 1, &nb_free) != 0) {
         printf("ERROR - CAS D absente\n");
         liste_liberer(l, &nb_free);
         liste_liberer(m, &nb_free);
@@ -206,7 +225,7 @@ int main(void) {
     printf("OK CAS D\n");
     afficher_valeur(l);
     afficher_valeur(m);
-    if (liste_delete(l, 30, &nb_free) != 0) {
+    if (tester_suppression(l, 30, 0, NULL, 0, &nb_free) != 0) {
         printf("ERROR - CAS E1 vider\n");
         liste_liberer(l, &nb_free);
         liste_liberer(m, &nb_free);
@@ -215,7 +234,7 @@ int main(void) {
     printf("OK CAS E1\n");
     afficher_valeur(l);
     afficher_valeur(m);
-    if (liste_delete(l, 10, &nb_free) != 1) {
+    if (tester_suppression(l, 10, 1, NULL, 0, &nb_free) != 0) {
         printf("ERROR - CAS E2 vide\n");
         liste_liberer(l, &nb_free);
         liste_liberer(m, &nb_free);
@@ -224,7 +243,7 @@ int main(void) {
     printf("OK CAS E2\n");
     afficher_valeur(l);
     afficher_valeur(m);
-    if (liste_delete(NULL, 10, &nb_free) != 1) {
+    if (tester_suppression(NULL, 10, 1, NULL, 0, &nb_free) != 0) {
         printf("ERROR - CAS F NULL\n");
         liste_liberer(l, &nb_free);
         liste_liberer(m, &nb_free);
@@ -236,30 +255,21 @@ int main(void) {
     struct Noeud *test = liste_ajouter_fin(m, 30);
     if (test != NULL) {
         nb_free_compare++;
-        if (liste_delete(m, 30, &nb_free) != 0) {
+        if (tester_suppression(m, 30, 0, test_delete_m_bis, 2, &nb_free) != 0) {
             printf("ERROR - CAS G doublon\n");
             liste_liberer(l, &nb_free);
             liste_liberer(m, &nb_free);
             return 1;
         }
+    } else {
+        printf("ERROR - CAS G ERROR MALLOC\n");
+        liste_liberer(l, &nb_free);
+        liste_liberer(m, &nb_free);
+        return 1;
     }
     printf("OK CAS G\n");
     afficher_valeur(l);
     afficher_valeur(m);
-
-    
-    if (verifier_liste(m, test_delete_m, 2) != 0) {
-        liste_liberer(l, &nb_free);
-        liste_liberer(m, &nb_free);
-        return 1;
-    }
-    afficher_valeur(m);
-    if (verifier_liste(l, test_delete_l, 0) != 0) {
-        liste_liberer(l, &nb_free);
-        liste_liberer(m, &nb_free);
-        return 1;
-    }
-    afficher_valeur(l);
 
     liste_liberer(l, &nb_free);
     liste_liberer(m, &nb_free);
