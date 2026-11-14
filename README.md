@@ -54,22 +54,22 @@ Chaque structure est séparée en bibliothèque et programme de test. `make` con
 
 **Tableau d'entiers dynamique** (fait) :
 
-- `tableau.h` : la structure et les déclarations ;
-- `tableau.c` : création, ajout en fin (capacité doublée avec `realloc`, tableau intact si l'agrandissement
+- `array.h` : la structure et les déclarations ;
+- `array.c` : création, ajout en fin (capacité doublée avec `realloc`, tableau intact si l'agrandissement
   échoue), lecture avec vérification des bornes, libération ;
-- `main_tableau.c` : 1000 ajouts depuis une capacité de 0, puis chaque valeur relue et comparée à la valeur
+- `main_array.c` : 1000 ajouts depuis une capacité de 0, puis chaque valeur relue et comparée à la valeur
   attendue.
 
 ```
 cd 02-structures
 make
-.\dist\tableau.exe
+.\dist\array.exe
 echo $LASTEXITCODE
 ```
 
 ```
-taille=1000 - capacite=1024
-OK : 1000 valeurs verifiees.
+size=1000 - capacity=1024
+OK: 1000 values checked.
 0
 ```
 
@@ -77,12 +77,12 @@ Le test renvoie 1 et affiche la première erreur (indice, valeur attendue, valeu
 
 **Liste chaînée** (en cours) :
 
-- `liste.h` : un nœud (valeur et adresse du suivant) et la liste (premier nœud et taille) ;
-- `liste.c` : création d'une liste vide, ajout en tête (renvoie `NULL` si l'allocation échoue, liste intacte),
+- `list.h` : un nœud (valeur et adresse du suivant) et la liste (premier nœud et taille) ;
+- `list.c` : création d'une liste vide, ajout en tête (renvoie `NULL` si l'allocation échoue, liste intacte),
   affichage, lecture du n-ième élément avec vérification de l'indice (valeur rendue par pointeur, rien n'est
   écrit en cas de refus), libération de tous les nœuds puis de la liste, qui accepte `NULL` et peut compter
   ses `free` dans un compteur passé par adresse (`NULL` si l'appelant ne compte pas) ;
-- `main_liste.c` : ajout en tête de 30, 20 puis 10, puis vérification de la taille, de l'ordre des valeurs
+- `main_list.c` : ajout en tête de 30, 20 puis 10, puis vérification de la taille, de l'ordre des valeurs
   (la liste se lit 10, 20, 30 : l'ajout en tête inverse l'ordre) et de la fin de la chaîne ; lecture des
   indices 0 à 2, puis refus de l'indice 3 et d'une liste vide, avec la variable de sortie inchangée ; enfin,
   le nombre de `free` faits à la libération est comparé au nombre d'allocations comptées par le test
@@ -91,7 +91,7 @@ Le test renvoie 1 et affiche la première erreur (indice, valeur attendue, valeu
 ```
 cd 02-structures
 make
-.\dist\liste.exe
+.\dist\list.exe
 echo $LASTEXITCODE
 ```
 
@@ -112,7 +112,7 @@ free compare it's OK!
 ```
 
 Chaque vérification ratée affiche une ligne `ERROR` (ou `WRONG` pour le compte des `free`) et le test
-renvoie 1. Par exemple, si `liste_liberer` oublie de libérer la structure de la liste, le test affiche
+renvoie 1. Par exemple, si `list_free` oublie de libérer la structure de la liste, le test affiche
 `nb_free: 3 nb_free_compare:5` et renvoie 1.
 
 Viendront ensuite l'ajout en fin et la suppression d'une valeur. La table de hachage suivra

@@ -1,19 +1,19 @@
 .PHONY: all clean
 CC = gcc
 CFLAGS = -Wall -Wextra -g -O2
-SRC_TABLEAU = tableau.c main_tableau.c
-SRC_LISTE = liste.c main_liste.c
+SRC_ARRAY = array.c main_array.c
+SRC_LIST = list.c main_list.c
 MKDIR = mkdir -p
 
-all: dist/tableau.exe dist/liste.exe
+all: dist/array.exe dist/list.exe
 
-clean: 
-	rm -f dist/tableau.exe dist/liste.exe
+clean:
+	rm -f dist/array.exe dist/list.exe
 
-dist/tableau.exe: $(SRC_TABLEAU) tableau.h Makefile
+dist/array.exe: $(SRC_ARRAY) array.h Makefile
 	$(MKDIR) dist
-	$(CC) $(CFLAGS) $(SRC_TABLEAU) -o $@
+	$(CC) $(CFLAGS) $(SRC_ARRAY) -o $@
 
-dist/liste.exe: $(SRC_LISTE) liste.h Makefile
+dist/list.exe: $(SRC_LIST) list.h Makefile
 	$(MKDIR) dist
-	$(CC) $(CFLAGS) $(SRC_LISTE) -o $@
+	$(CC) $(CFLAGS) $(SRC_LIST) -o $@
