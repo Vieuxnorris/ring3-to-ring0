@@ -50,7 +50,7 @@ fothk
 
 ### 02 : bibliothèque de structures
 
-Chaque structure est séparée en bibliothèque et programme de test. `make` construit les deux programmes.
+Chaque structure est séparée en bibliothèque et programme de test. `make` construit les trois programmes.
 
 **Tableau d'entiers dynamique** (fait) :
 
@@ -75,18 +75,23 @@ OK: 1000 values checked.
 
 Le test renvoie 1 et affiche la première erreur (indice, valeur attendue, valeur lue) si une valeur est fausse.
 
-**Liste chaînée** (en cours) :
+**Liste chaînée** (fait) :
 
 - `list.h` : un nœud (valeur et adresse du suivant) et la liste (premier nœud et taille) ;
-- `list.c` : création d'une liste vide, ajout en tête (renvoie `NULL` si l'allocation échoue, liste intacte),
-  affichage, lecture du n-ième élément avec vérification de l'indice (valeur rendue par pointeur, rien n'est
-  écrit en cas de refus), libération de tous les nœuds puis de la liste, qui accepte `NULL` et peut compter
-  ses `free` dans un compteur passé par adresse (`NULL` si l'appelant ne compte pas) ;
-- `main_list.c` : ajout en tête de 30, 20 puis 10, puis vérification de la taille, de l'ordre des valeurs
-  (la liste se lit 10, 20, 30 : l'ajout en tête inverse l'ordre) et de la fin de la chaîne ; lecture des
-  indices 0 à 2, puis refus de l'indice 3 et d'une liste vide, avec la variable de sortie inchangée ; enfin,
-  le nombre de `free` faits à la libération est comparé au nombre d'allocations comptées par le test
-  (1 par liste créée, 1 par nœud ajouté).
+- `list.c` : création d'une liste vide, ajout en tête et ajout en fin (renvoient `NULL` si l'allocation
+  échoue, liste intacte), affichage, lecture du n-ième élément avec vérification de l'indice (valeur rendue
+  par pointeur, rien n'est écrit en cas de refus), suppression de la première occurrence d'une valeur
+  (renvoie 1 si elle est absente), libération de tous les nœuds puis de la liste, qui accepte `NULL` ; la
+  suppression et la libération peuvent compter leurs `free` dans un compteur passé par adresse (`NULL` si
+  l'appelant ne compte pas) ;
+- `main_list.c` : ajout en tête de 30, 20 puis 10 (la liste se lit 10, 20, 30 : l'ajout en tête inverse
+  l'ordre), vérification de la taille, de l'ordre des valeurs et de la fin de la chaîne ; lecture des
+  indices 0 à 2, puis refus de l'indice 3 et d'une liste vide, avec la variable de sortie inchangée ; ajouts
+  en fin, dont un échec d'allocation forcé qui doit laisser la liste intacte ; suppressions en tête, au
+  milieu, en fin, d'une valeur absente, du dernier élément, dans une liste vide, dans une liste `NULL` et
+  d'une valeur en double (seul le premier exemplaire part), chacune vérifiée par son retour, puis par
+  l'ordre et la taille de la liste ; enfin, le nombre de `free` faits est comparé au nombre d'allocations
+  comptées par le test (1 par liste créée, 1 par nœud ajouté).
 
 ```
 cd 02-structures
@@ -97,26 +102,48 @@ echo $LASTEXITCODE
 
 ```
 ...
-TAILLE OK!
-valeur:10 valeur:20 valeur:30
-last P value is NULL
-VALEUR OK!
-test 1 -- buffer:10 - valeur_ajouts:10
-test 1 -- buffer:20 - valeur_ajouts:20
-test 1 -- buffer:30 - valeur_ajouts:30
-test 2 -- buffer:777
-test 3 -- buffer:777
-Nombre de free nb_free: 5 nb_free_compare:5
+OK CASE F
+
+value:30 value:20
+OK CASE G
+...
+Number of free nb_free: 12 nb_free_compare:12
 free compare it's OK!
 0
 ```
 
 Chaque vérification ratée affiche une ligne `ERROR` (ou `WRONG` pour le compte des `free`) et le test
 renvoie 1. Par exemple, si `list_free` oublie de libérer la structure de la liste, le test affiche
-`nb_free: 3 nb_free_compare:5` et renvoie 1.
+`nb_free: 9 nb_free_compare:12` et renvoie 1.
 
-Viendront ensuite l'ajout en fin et la suppression d'une valeur. La table de hachage suivra
-dans le même dossier.
+**Table de hachage** (en cours) : clés et valeurs `int`, une liste chaînée par case pour les clés qui
+tombent dans la même case.
+
+- `hash.h` : une entrée (clé, valeur, adresse de la suivante) et la table (tableau de cases, nombre de
+  cases, nombre de clés) ;
+- `hash.c` : création avec toutes les cases vides (refuse 0 case, et rend ce qu'elle a déjà alloué si une
+  allocation échoue), libération des entrées de chaque case, puis du tableau de cases et de la table, avec
+  le même compteur de `free` que la liste ;
+- `main_hash.c` : création et libération d'une table de 10 cases (2 `free` attendus), refus d'une table de
+  0 case et d'une table trop grande pour être allouée.
+
+```
+cd 02-structures
+make
+.\dist\hash.exe
+echo $LASTEXITCODE
+```
+
+```
+ERROR NB_BUCKETS: 0
+ERROR MALLOC ENTRY LIST
+Number of free nb_free: 2 nb_free_compare:2
+free compare it's OK!
+0
+```
+
+Les deux lignes `ERROR` viennent des deux refus attendus. Viendront ensuite le calcul de la case d'une
+clé (y compris négative), l'ajout, la lecture et la suppression d'une clé.
 
 `make clean` supprime les fichiers compilés.
 
