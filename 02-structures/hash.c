@@ -64,3 +64,17 @@ void hash_free(struct Hash *h, size_t *nb_free) {
         }
     }
 }
+
+size_t search_index(size_t nb_bucket, int key) {
+    if (key >= 0) {
+        return key % nb_bucket;
+    } else {
+        size_t distance = -(key + 1); // -(-9 + 1) = 8
+        distance++; // 8 + 1 = 9
+        size_t r = distance % nb_bucket; // r = 9%8 = 1
+        if (r == 0) {
+            return 0;
+        }
+        return nb_bucket - r; // 8 - 1
+    }
+}
