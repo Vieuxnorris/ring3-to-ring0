@@ -78,3 +78,25 @@ size_t search_index(size_t nb_bucket, int key) {
         return nb_bucket - r; // 8 - 1
     }
 }
+
+int hash_add(struct Hash *h, int key, int value) {
+    if (h != NULL) {
+        int index = search_index(h->nb_buckets, key);
+        struct Entry *e = h->buckets[index];
+        if (e != NULL) {
+            struct Entry *previous = NULL;
+            while(e->next != NULL) {
+                previous = e;
+                e = e->next;
+            }
+            e->key = key;
+            e->value = value;
+            previous->next = e;
+        } else {
+            e->key = key;
+            e->value = value;
+            e->next = NULL;
+        }
+    }
+    return 1;
+}
