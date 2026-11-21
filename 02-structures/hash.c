@@ -82,21 +82,31 @@ size_t search_index(size_t nb_bucket, int key) {
 int hash_add(struct Hash *h, int key, int value) {
     if (h != NULL) {
         int index = search_index(h->nb_buckets, key);
-        struct Entry *e = h->buckets[index];
-        if (e != NULL) {
-            struct Entry *previous = NULL;
-            while(e->next != NULL) {
-                previous = e;
-                e = e->next;
+        struct Entry *current = h->buckets[index]; // target = [13]
+
+        struct Entry *previous = NULL;
+        while(current != NULL) {
+            previous = current;
+            if (previous->key == key) {
+                previous->value = value;
+                return 0;
             }
-            e->key = key;
-            e->value = value;
-            previous->next = e;
-        } else {
-            e->key = key;
-            e->value = value;
-            e->next = NULL;
+            current = current->next; // target = [23]
         }
+        struct Entry *new = malloc(sizeof(struct Entry)); // {key=??, value=??, next=??}
+        if (new == NULL) {
+            return 1;
+        }
+        new->key = key; // new = [33]
+        new->value = value;
+        new->next = NULL;
+        if (previous == NULL) {
+            h->buckets[index] = new;
+        } else {
+            previous->next = new; // target = [23] --next--> new [33]
+        }
+        h->size += 1;
+        return 0;
     }
     return 1;
 }
