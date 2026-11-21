@@ -33,18 +33,30 @@ int main(void) {
 
     if (search_index(8, -9) != 7) {
         printf("ERROR INDEX SEARCH RESULT != 7\n");
+        hash_free(h, &nb_free);
+        hash_free(m, &nb_free);
+        hash_free(g, &nb_free);
         return 1;
     }
     if (search_index(8, -8) != 0) {
         printf("ERROR INDEX SEARCH RESULT != 0\n");
+        hash_free(h, &nb_free);
+        hash_free(m, &nb_free);
+        hash_free(g, &nb_free);
         return 1;
     }
     if (search_index(8, INT_MIN) != 0) {
         printf("ERROR INDEX SEARCH RESULT LIMIT NEGATIF != 0\n");
+        hash_free(h, &nb_free);
+        hash_free(m, &nb_free);
+        hash_free(g, &nb_free);
         return 1;
     }
     if (search_index(h->nb_buckets, INT_MAX) != 7) {
         printf("ERROR INDEX SEARCH RESULT LIMIT POSITIF != 7\n");
+        hash_free(h, &nb_free);
+        hash_free(m, &nb_free);
+        hash_free(g, &nb_free);
         return 1;
     }
 
