@@ -59,7 +59,6 @@ int main(void) {
         hash_free(g, &nb_free);
         return 1;
     }
-
     if (hash_add(h, 13, 42) != 0) {
         printf("ERROR hash_add(13, 42)\n");
         hash_free(h, &nb_free);
@@ -107,7 +106,7 @@ int main(void) {
         return 1;
     }
     if (e->next->key != 23 || e->next->value != 99 || e->next->next != NULL) {
-        printf("ERROR second value inside bucket 3 : key=%d - value=%d - next=%p\n", e->key, e->value, e->next);
+        printf("ERROR second value inside bucket 3 : key=%d - value=%d - next=%p\n", e->next->key, e->next->value, e->next->next);
         hash_free(h, &nb_free);
         hash_free(m, &nb_free);
         hash_free(g, &nb_free);
@@ -122,7 +121,7 @@ int main(void) {
         return 1;
     }
     if (e->next->key != 23 || e->next->value != 100 || e->next->next != NULL) {
-        printf("ERROR second value inside bucket 3 : key=%d - value=%d - next=%p\n", e->key, e->value, e->next);
+        printf("ERROR second value inside bucket 3 : key=%d - value=%d - next=%p\n", e->next->key, e->next->value, e->next->next);
         hash_free(h, &nb_free);
         hash_free(m, &nb_free);
         hash_free(g, &nb_free);
@@ -130,6 +129,51 @@ int main(void) {
     }
     if (h->size != 2) {
         printf("ERROR size=2 not %zu\n", h->size);
+        hash_free(h, &nb_free);
+        hash_free(m, &nb_free);
+        hash_free(g, &nb_free);
+        return 1;
+    }
+
+    if (hash_add(NULL, 1, INT_MIN) != 1) {
+        printf("ERROR hash_add(NULL, 1, INT_MIN)\n");
+        hash_free(h, &nb_free);
+        hash_free(m, &nb_free);
+        hash_free(g, &nb_free);
+        return 1;
+    }
+    if (h->size != 2) {
+        printf("ERROR size=2 not %zu\n", h->size);
+        hash_free(h, &nb_free);
+        hash_free(m, &nb_free);
+        hash_free(g, &nb_free);
+        return 1;
+    }
+    if (hash_add(h, 1, INT_MIN) != 0) {
+        printf("ERROR hash_add(h, 1, INT_MIN)\n");
+        hash_free(h, &nb_free);
+        hash_free(m, &nb_free);
+        hash_free(g, &nb_free);
+        return 1;
+    }
+    nb_free_compare++;
+    struct Entry *t = h->buckets[1];
+    if (t == NULL) {
+        printf("ERROR bucket 1 is empty\n");
+        hash_free(h, &nb_free);
+        hash_free(m, &nb_free);
+        hash_free(g, &nb_free);
+        return 1;
+    }
+    if (h->size != 3) {
+        printf("ERROR size=3 not %zu\n", h->size);
+        hash_free(h, &nb_free);
+        hash_free(m, &nb_free);
+        hash_free(g, &nb_free);
+        return 1;
+    }
+    if (t->key != 1 || t->value != INT_MIN || t->next != NULL) {
+        printf("ERROR second value inside bucket 1 : key=%d - value=%d - next=%p\n", t->key, t->value, t->next);
         hash_free(h, &nb_free);
         hash_free(m, &nb_free);
         hash_free(g, &nb_free);

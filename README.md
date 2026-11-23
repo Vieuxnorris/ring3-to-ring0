@@ -116,16 +116,14 @@ Chaque vérification ratée affiche une ligne `ERROR` (ou `WRONG` pour le compte
 renvoie 1. Par exemple, si `list_free` oublie de libérer la structure de la liste, le test affiche
 `nb_free: 9 nb_free_compare:12` et renvoie 1.
 
-**Table de hachage** (en cours) : clés et valeurs `int`, une liste chaînée par case pour les clés qui
-tombent dans la même case.
 
-- `hash.h` : une entrée (clé, valeur, adresse de la suivante) et la table (tableau de cases, nombre de
-  cases, nombre de clés) ;
-- `hash.c` : création avec toutes les cases vides (refuse 0 case, et rend ce qu'elle a déjà alloué si une
-  allocation échoue), libération des entrées de chaque case, puis du tableau de cases et de la table, avec
-  le même compteur de `free` que la liste ;
-- `main_hash.c` : création et libération d'une table de 10 cases (2 `free` attendus), refus d'une table de
-  0 case et d'une table trop grande pour être allouée.
+**Table de hachage** (en cours) : clés et valeurs `int`, une liste chaînée par case pour gérer les collisions.
+
+- `hash.h` : une entrée (clé, valeur, adresse de la suivante) et la table (tableau de cases, nombre de cases, nombre de clés) ;
+- `hash.c` : création avec cases vides (refus de 0 case ou d'une allocation impossible), libération des entrées, du tableau et de la table, avec comptage des `free` ;
+- `search_index` (`hash.c`) : calcul de l'indice d'une clé par modulo, y compris négative et `INT_MIN`, sans débordement signé ;
+- `hash_add` (`hash.c`) : insertion d'une paire clé-valeur en fin de chaîne ou mise à jour d'une clé existante sans nouvelle allocation ni changement de taille ;
+- `main_hash.c` : tests de création et d'échec d'allocation, des indices (-9, -8, `INT_MIN`, `INT_MAX`), des collisions (13 et 23), de la mise à jour (23), du refus de `NULL`, de l'insertion d'une valeur `INT_MIN`, de la taille et du nombre de `free`.
 
 ```
 cd 02-structures
@@ -137,13 +135,14 @@ echo $LASTEXITCODE
 ```
 ERROR NB_BUCKETS: 0
 ERROR MALLOC ENTRY LIST
-Number of free nb_free: 2 nb_free_compare:2
+Number of free nb_free: 5 nb_free_compare:5
 free compare it's OK!
 0
 ```
 
-Les deux lignes `ERROR` viennent des deux refus attendus. Viendront ensuite le calcul de la case d'une
-clé (y compris négative), l'ajout, la lecture et la suppression d'une clé.
+Les deux lignes `ERROR` correspondent aux refus attendus. Chaque vérification ratée affiche une erreur et renvoie 1. Par exemple, si `hash_add` incrémente la taille lors de la mise à jour de la clé 23, le test affiche `ERROR size=2 not 3` et renvoie 1.
+
+La lecture et la suppression d'une clé restent à implémenter.
 
 `make clean` supprime les fichiers compilés.
 
