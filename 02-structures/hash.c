@@ -182,3 +182,18 @@ int hash_add(struct Hash *h, int key, int value) {
     }
     return 1;
 }
+
+struct Entry *hash_get(struct Hash *h, int key, int value) {
+    if (h != NULL) {
+        size_t index = search_index(h->nb_buckets, key);
+        struct Entry *current = h->buckets[index];
+
+        while (current != NULL) {
+            if (current->key == key && current->value == value) {
+                return current;
+            }
+        }
+        return NULL;
+    }
+    return NULL;
+}
