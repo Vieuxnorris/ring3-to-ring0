@@ -183,6 +183,25 @@ int hash_add(struct Hash *h, int key, int value) {
     return 1;
 }
 
+int hash_delete(struct Hash *h, int key, int value) {
+    if (h != NULL) {
+        size_t index = search_index(h->nb_buckets, key);
+        struct Entry *current = h->buckets[index]; // target = [13]
+
+        struct Entry *previous = NULL;
+        while(current != NULL) {
+            previous = current;
+            if (previous->key == key) {
+                free(previous);
+                h->size -= 1;
+                return 0;
+            }
+            current = current->next; // target = [23]
+        }
+    }
+    return 1;
+}
+
 struct Entry *hash_get(struct Hash *h, int key, int value) {
     if (h != NULL) {
         size_t index = search_index(h->nb_buckets, key);
